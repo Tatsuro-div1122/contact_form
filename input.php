@@ -1,39 +1,53 @@
 <?php
-  session_start();
-  $error = "";
-  if(isset($_POST['name'])) {
-    $_SESSION['name'] = $_POST['name'];
-    if(empty($_SESSION['name'])) {
-      $error = '名前を入力してください';
-    header('Location: input.php');
-    exit;
-    }else{
-      ('Location: confirm.php');
-    }
+require_once('function.php');
+session_start();
+if(isset($_POST["btn_confirm"])){
+  $name = $_POST["name"];
+  $email = $_POST["email"];
+  $content = $_POST["content"];
+  $errors = validation($name, $email, $content);
+  if(count($errors) === 0){
+      $_SESSION["name"] = $name;
+      $_SESSION["email"] = $email;
+      $_SESSION["content"] = $content;
+      header("Location: confirm.php");
+      exit();
   }
-  if(isset($_POST['email'])) {
-    $_SESSION['email'] = $_POST['email'] ;
-  }
-  if(isset($_POST['content'])) {
-    $_SESSION['content'] = $_POST['content'];
-  }
+}
 ?>
-<!DOCTYPE html>
 <html>
-<body>
-    <h1>フォーム(入力)</h1>
-    <form action="" method="post">
-        名前<br>
-        <input type="text" name="name" size="30">
-        <br>
-        <?php if(isset($error)):?>
-            <p><?php echo $error; ?></p>
-        <?php endif; ?>
-        メールアドレス<br>
-        <input type="text" name="email" size="30"><br>
-        問い合わせ内容<br>
-        <textarea name="content" cols="50" rows="8"></textarea><br>
-        <input type="submit" value="確認">
+  <body>
+    <h1>入力画面</h1>
+
+    <form method="POST">
+
+      <p>名前</p>
+      <input type="text" name="name" value="<?php if(isset($errors)){echo htmlspecialchars($name, ENT_QUOTES); }elseif(!empty($_SESSION["name"])){echo htmlspecialchars($_SESSION["name"]);}?>"><br>
+      <?php
+          if(isset($errors["name"])) {
+            echo $errors["name"];
+          }
+       ?>
+
+      <p>メールアドレス</p>
+      <input type="text" name="email" value="<?php if(isset($errors)){echo htmlspecialchars($email, ENT_QUOTES); }elseif(!empty($_SESSION["email"])){echo htmlspecialchars($_SESSION["email"]);}?>"><br>
+      <?php
+          if(isset($errors["email"])) {
+            echo $errors["email"];
+          }
+       ?>
+
+      <p>問い合わせ内容</p>
+      <input type="content" name="content" value="<?php if(isset($errors)){echo htmlspecialchars($content, ENT_QUOTES); }elseif(!empty($_SESSION["content"])){echo htmlspecialchars($_SESSION["content"]);}?>">
+      <br>
+      <?php
+          if(isset($errors["content"])) {
+            echo $errors["content"];
+          }
+       ?>
+      <br><br>
+
+      <br><input type="submit" name="btn_confirm" value="確認">
     </form>
-</body>
+  </body>
 </html>
