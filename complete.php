@@ -1,22 +1,13 @@
 <?php
 require_once('db.php');
 session_start();
-
-
-$db = db_connection();
 $name = $_SESSION['name'];
 $email = $_SESSION['email'];
 $content = $_SESSION['content'];
 
-$sql = "INSERT INTO contact_form(name, email, content)VALUES(:name, :email, :content)";
+$db1 = new Setdb();
+$db1->inquiry_db($name, $email, $content);
 
-$stmt = $db->prepare($sql);
-
-$stmt -> bindParam(':name', $name, PDO::PARAM_STR);
-$stmt -> bindParam(':email', $email, PDO::PARAM_STR);
-$stmt -> bindParam(':content', $content, PDO::PARAM_STR);
-
-$stmt->execute();
 
 ?>
 
