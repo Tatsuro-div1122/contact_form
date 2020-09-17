@@ -1,63 +1,61 @@
 <?php
+
 session_start();
+
+require_once('db.php');
+
+
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
-$email = $_POST['email'];
-$dsn = "mysql:dbname=test;host=localhost;charaset=utf8";
-$user = "root";
-$password = "";
-try {
-  $dbh = new PDO($dsn, $user, $password);
-  $sql = "SELECT * FROM admin WHERE email = :email";
-  $stmt = $dbh->prepare($sql);
-  $stmt->bindParm(':email', $email, PDO::PARAM_STR);
-  $stmt->execute();
-  $admin = $stmt->fetch();
-} catch (PDOException $e) {
-echo "接続失敗:" .$e->getMessage(). "\n";
-exit();
-}
+  $email = $_POST['email'];
+  $password = $_POST['password'];
+  
+  $errors = array();
 
-
-
-if (password_verify($_POST['password'], admin['password'])){
-  header("Location: list.php");
-}else{
-  $msg = "メールアドレスかパスワードが正しくありません";
-}
-}
-
-if($_SERVER["REQUEST_METHOD"] == "POST"){
-  $email = $_POST["email"];
-  if(empty($_POST["password"])){
-    $password = "";
-  }else{
-    $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+  if ($email === '') {
+    $errors['email'] = "*メールアドレスを入力してください";
   }
-  $validation = new Validation();
-  $errors = $validation->admin_login_errmsg($email, $password);
-  if(empty($errors)){
-    $db1 = new Setdb();
-    $db = $db1->admin_db();
+  if ($password === '') {
+    $errors['password'] = "*パスワードを入力してください";
+  }
 
+  if(count($errors) === 0) {
 
-    $sql = 'INSERT INTO admin(name, email, password)VALUES(:name, :email, :password)';
+    $db = db_connect();
 
+    $sql = 'SELECT * FROM admin WHERE email = :email ' ;
     $stmt = $db->prepare($sql);
-
-    $stmt -> bindParam(':name', $name, PDO::PARAM_STR);
     $stmt -> bindParam(':email', $email, PDO::PARAM_STR);
-    $stmt -> bindParam(':password', $password, PDO::PARAM_STR);
 
     $stmt->execute();
 
-    header("Location: list.php");
-    exit();
+    $rows = $stmt->fetchAll();
+
+    foreach ($rows as $row) {
+      $password_hash = $row['password'];
+
+      if (password_verify($password, $password_hash)) {
+        $_SESSION['login_user'] = $row;
+        header('Location: list.php');
+        exit();
+      }else{
+        $errors['login'] = "ログインに失敗しました";
+
+      }
+    }
   }
 }
+
+
+
+
+
 ?>
 <html>
   <body>
     <h1>管理者ログイン画面</h1>
+    <b>
+      <?php if(isset($errors['login'])){echo $errors['login'];}?>
+    </b>
 
     <form method="POST">
 
@@ -80,11 +78,17 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
           }
          ?>
       </span>
-      <br><br>
-      <input type="button" onclick="location.href='#" value="戻る" >
+
+      <br>
+      <br>
+      <input type="button" onclick="location.href='#'" value="戻る" >
 
       <input type="submit" value="ログイン">
     </form>
   </body>
 </html>
-
+<?php
+ echo "<pre>";
+ echo var_dump($rows, $password);
+ echo "</pre>";
+?>

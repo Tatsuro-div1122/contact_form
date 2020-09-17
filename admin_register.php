@@ -12,8 +12,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
   $validation = new Validation();
   $errors = $validation->admin_errmsg($name, $email, $password);
   if(empty($errors)){
-    $db1 = new Setdb();
-    $db = $db1->admin_db();
+    $db = db_connect();
 
 
     $sql = 'INSERT INTO admin(name, email, password)VALUES(:name, :email, :password)';

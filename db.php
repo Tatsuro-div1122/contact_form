@@ -21,7 +21,9 @@
       exit();
       }
     }
-   function admin_db() {
+  }
+
+   function db_connect() {
     try {
       $dsn = "mysql:dbname=test;host=localhost;charaset=utf8";
       $user = "root";
@@ -35,6 +37,4 @@
     exit();
     }
   }
-  }
-
 
