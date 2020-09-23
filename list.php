@@ -1,20 +1,29 @@
 <?php
 
-session_start();
+  session_start();
+  require_once('db.php');
+  require_once('function.php');
+  check_login();
 
-require_once('db.php');
+  if(isset($_POST['logout'])){
+    $_SESSION=array();
+    $session_destroy;
+  }
 
-$db = db_connect();
+  $db = db_connect();
 
-$sql = 'SELECT * FROM admin';
-$stmt = $db->prepare($sql);
-$stmt->execute();
-$users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  $sql = 'SELECT * FROM admin';
+  $stmt = $db->prepare($sql);
+  $stmt->execute();
+  $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 ?>
 
 <h1>ユーザー一覧</h1>
-
+<form method="POST" action="login.php">
+  <input type="submit" name="logout" value="ログアウト">
+</form>
 <table border="1">
   <thead>
     <tr>
@@ -51,6 +60,6 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <?php
  echo "<pre>";
- echo var_dump($_SESSION['login_user']);
+ echo var_dump($_SESSION);
  echo "</pre>";
 ?>

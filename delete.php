@@ -1,17 +1,19 @@
 <?php
-session_start();
-require_once('db.php');
+  session_start();
+  require_once('db.php');
+  require_once('function.php');
+  check_login();
 
-if(isset($_POST['delete'])){
-  $id = $_GET['id'];
-  $db = db_connect();
-  $sql = 'DELETE FROM admin WHERE ID = :id';
-  $stmt = $db->prepare($sql);
-  $stmt -> bindParam(':id', $id, PDO::PARAM_INT);
-  $stmt->execute();
+  if(isset($_POST['delete'])){
+    $id = $_GET['id'];
+    $db = db_connect();
+    $sql = 'DELETE FROM admin WHERE ID = :id';
+    $stmt = $db->prepare($sql);
+    $stmt -> bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
 
-  header('Location: list.php');
-}
+    header('Location: list.php');
+  }
 ?>
 
 <h1>本当に削除しますか？</h1>

@@ -42,3 +42,9 @@
         return $errors;
     }
   }
+
+function check_login(){
+  if(empty($_SESSION['id'])){
+    header('Location: login.php');
+  }
+}

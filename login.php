@@ -5,7 +5,8 @@ session_start();
 require_once('db.php');
 
 
-if($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+if(isset($_POST['submit'])){
   $email = $_POST['email'];
   $password = $_POST['password'];
   
@@ -22,7 +23,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
     $db = db_connect();
 
-    $sql = 'SELECT * FROM admin WHERE email = :email ' ;
+    $sql = 'SELECT * FROM admin WHERE email = :email' ;
     $stmt = $db->prepare($sql);
     $stmt -> bindParam(':email', $email, PDO::PARAM_STR);
 
@@ -34,7 +35,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
       $password_hash = $row['password'];
 
       if (password_verify($password, $password_hash)) {
-        $_SESSION['login_user'] = $row;
+        $_SESSION['id'] = $row['id'];
         header('Location: list.php');
         exit();
       }else{
@@ -81,14 +82,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
       <br>
       <br>
-      <input type="button" onclick="location.href='#'" value="戻る" >
+      <input type="button" onclick="location.href='admin_register.php'" value="新規登録" >
 
-      <input type="submit" value="ログイン">
+      <input type="submit" name="submit" value="ログイン">
     </form>
   </body>
 </html>
-<?php
- echo "<pre>";
- echo var_dump($rows, $password);
- echo "</pre>";
+
+
+<?php 
+  echo var_dump($_SESSION);
 ?>

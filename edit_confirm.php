@@ -1,29 +1,37 @@
 <?php
   session_start();
   require_once('db.php');
+  require_once('function.php');
+  check_login($_SESSION['id']);
 
-  if(!empty($_GET['id'])) {
-    $id = $_GET['id'];
-    $db = db_connect();
-    $sql = 'SELECT * FROM admin WHERE id = :id';
-    $stmt = $db->prepare($sql);
-    $stmt -> bindParam(':id', $id, PDO::PARAM_INT);
-    $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+  $name = $_SESSION['name'];
+  $email = $_SESSION['email'];
+  $id = $_SESSION['id'];
+  if(isset($_POST['submit'])){
+      $db = db_connect();
+      $sql = 'UPDATE admin set name = :name, email = :email WHERE id = :id';
+      $stmt = $db->prepare($sql);
+      $stmt -> bindParam(':name', $name, PDO::PARAM_INT);
+      $stmt -> bindParam(':email', $email, PDO::PARAM_INT);
+      $stmt -> bindParam(':id', $id, PDO::PARAM_INT);
+      $stmt->execute();
+      header('Location: list.php');
+      exit();
   }
 ?>
-<h1>ユーザー編集画面</h1>
-<form action="edit_confirm.php" method='GET'>
-  <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
+<h1>ユーザー編集確認画面</h1>
+<form method='POST'>
   <p>
-    Name: <input type="text" name="name" value="<?php echo htmlspecialchars($user['name']) ;?>">
+    Name: <?php echo htmlspecialchars($name) ;?>
   </p>
   <p>
-    Email: <input type="text" name="email" value="<?php echo htmlspecialchars($user['email']) ;?>">
+    Email: <?php echo htmlspecialchars($email) ;?>
   </p>
 
 
   <br>
   <input type='button' value="戻る" onclick="history.back()">
-  <input type='submit' value="確認">
+  <input type='submit' name='submit' value="確認">
 </form>
+
+

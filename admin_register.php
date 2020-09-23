@@ -24,6 +24,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $stmt -> bindParam(':password', $password, PDO::PARAM_STR);
 
     $stmt->execute();
+    $login_user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $_SESSION['id'] = $login_user['id'];
 
     header("Location: list.php");
     exit();
@@ -72,4 +74,3 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
   </body>
 </html>
 
-<?php var_dump($name, $email, $password); ?>
